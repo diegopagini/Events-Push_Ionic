@@ -1,0 +1,7 @@
+{
+  "name": "event-push",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
