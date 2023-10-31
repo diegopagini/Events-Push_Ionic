@@ -5,12 +5,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { NgxsModule } from '@ngxs/store';
 import { initializeApp } from 'firebase/app';
 import { environment } from 'src/environments/environment';
 import { httpLoaderFactory } from 'src/helpers/http-loader-factory';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AuthState } from './state/auth/auth.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,6 +29,7 @@ import { AppComponent } from './app.component';
       },
     }),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
+    NgxsModule.forRoot([AuthState]),
   ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
