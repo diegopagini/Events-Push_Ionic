@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { FIREBASE_OPTIONS } from '@angular/fire/compat';
+import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -15,6 +16,7 @@ import { httpLoaderFactory } from 'src/helpers/http-loader-factory';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthState } from './state/auth/auth.state';
+import { EventsState } from './state/event/events.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,9 +32,12 @@ import { AuthState } from './state/auth/auth.state';
         deps: [HttpClient],
       },
     }),
+    // Firebase
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-    NgxsModule.forRoot([AuthState]),
+    provideDatabase(() => getDatabase()),
+    // Ngxs
+    NgxsModule.forRoot([AuthState, EventsState]),
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
