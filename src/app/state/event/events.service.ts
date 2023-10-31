@@ -1,6 +1,19 @@
 import { Injectable } from '@angular/core';
 import { FirebaseApp } from '@angular/fire/app';
-import { Database, getDatabase, push, ref, remove, set } from '@angular/fire/database';
+import {
+  Database,
+  DataSnapshot,
+  get,
+  getDatabase,
+  orderByChild,
+  push,
+  query,
+  ref,
+  remove,
+  set,
+  startAt,
+} from '@angular/fire/database';
+import * as moment from 'moment';
 import { EventDDR } from 'src/app/interfaces/event.ddr';
 
 @Injectable({
@@ -59,5 +72,14 @@ export class EventsService {
         reject(false);
       }
     });
+  }
+
+  getFutureEvents(): Promise<DataSnapshot> {
+    const queryDB = query(
+      ref(this.database, 'events'),
+      orderByChild('start'),
+      startAt(moment().format('YYYY-MM-DDTHH:mm'))
+    );
+    return get(queryDB);
   }
 }
