@@ -46,7 +46,7 @@ export class AuthState {
   @Action(Logout)
   logout({ setState }: StateContext<AuthStateModel>) {
     return this._authService.logout().then(() => {
-      setState({ isLogged: true });
+      setState({ isLogged: false });
     });
   }
 

@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Device } from '@capacitor/device';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Store } from '@ngxs/store';
+
+import { CheckIsLogged } from './state/auth/auth.actions';
 
 @Component({
   selector: 'app-root',
@@ -10,19 +13,23 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppComponent implements OnInit {
   constructor(
-    private translateService: TranslateService,
-    private platform: Platform
+    private _platform: Platform,
+    private _store: Store,
+    private _translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
-    this.translateService.setDefaultLang('es');
+    this._translateService.setDefaultLang('es');
     this.initApp();
   }
 
   private initApp(): void {
-    this.platform.ready().then(async () => {
+    this._platform.ready().then(async () => {
       const language = await Device.getLanguageCode();
-      if (language.value) this.translateService.use(language.value.slice(0, 2));
+      if (language.value)
+        this._translateService.use(language.value.slice(0, 2));
+
+      this._store.dispatch(new CheckIsLogged());
     });
   }
 }
