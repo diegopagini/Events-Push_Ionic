@@ -21,6 +21,7 @@
         <ion-datetime
           id="start"
           name="start"
+          [min]="minDate"
           [doneText]="'label.ok.text' | translate"
           [cancelText]="'label.cancel.text' | translate"
           formControlName="start"
@@ -52,6 +53,7 @@
         <ion-datetime
           id="end"
           name="end"
+          [min]="minDate"
           [doneText]="'label.ok.text' | translate"
           [cancelText]="'label.cancel.text' | translate"
           formControlName="end"
