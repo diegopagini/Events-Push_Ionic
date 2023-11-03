@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { Store } from '@ngxs/store';
 import * as moment from 'moment';
+import { catchError, tap, throwError } from 'rxjs';
 import { EventDDR } from 'src/app/interfaces/event.ddr';
+import { ToastService } from 'src/app/services/toast.service';
+import { CreateEvent } from 'src/app/state/event/events.actions';
+import { EventsState } from 'src/app/state/event/events.state';
 
 @Component({
   selector: 'app-add-edit-events',
@@ -15,14 +22,54 @@ export class AddEditEventsComponent implements OnInit {
   showEnd = false;
   minDate: string;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private store: Store,
+    private toastService: ToastService,
+    private translateService: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.initEvents();
   }
 
   addEditEvent(): void {
-    console.log(this.eventForm.value);
+    if (this.eventForm.valid) {
+      this.event = this.eventForm.value;
+      if (!this.showEnd) this.event.end = '';
+
+      if (this.edit) {
+      } else {
+        this.store
+          .dispatch(new CreateEvent(this.event))
+          .pipe(
+            catchError((error) => {
+              this.toastService.showToast(
+                this.translateService.instant('label.add.event.error')
+              );
+
+              return throwError(() => error);
+            }),
+            tap(() => {
+              const success = this.store.selectSnapshot(EventsState.success);
+              if (success) {
+                this.toastService.showToast(
+                  this.translateService.instant('label.add.event.success')
+                );
+
+                this.newEvent();
+                this.router.navigate(['events']);
+              } else {
+                this.toastService.showToast(
+                  this.translateService.instant('label.add.event.error')
+                );
+              }
+            })
+          )
+          .subscribe();
+      }
+    }
   }
 
   changeShowEnd(): void {
@@ -53,7 +100,7 @@ export class AddEditEventsComponent implements OnInit {
     });
   }
 
-  private initEvents(): void {
+  initEvents(): void {
     if (!this.event) {
       this.edit = false;
       this.showEnd = false;

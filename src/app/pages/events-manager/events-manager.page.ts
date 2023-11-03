@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Logout } from 'src/app/state/auth/auth.actions';
 import { AuthState } from 'src/app/state/auth/auth.state';
+
+import { AddEditEventsComponent } from './components/add-edit-events/add-edit-events.component';
 
 @Component({
   selector: 'app-events-manager',
@@ -10,10 +12,17 @@ import { AuthState } from 'src/app/state/auth/auth.state';
   styleUrls: ['./events-manager.page.scss'],
 })
 export class EventsManagerPage {
+  @ViewChild(AddEditEventsComponent, { static: false })
+  manageEvents: AddEditEventsComponent;
+
   @Select(AuthState.isLogged)
   isLogged$: Observable<boolean>;
 
   constructor(private _store: Store) {}
+
+  ionViewWillEnter(): void {
+    if (this.manageEvents) this.manageEvents.initEvents();
+  }
 
   logout(): void {
     this._store.dispatch(new Logout());

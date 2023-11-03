@@ -22,7 +22,9 @@ import { EventsState } from './state/event/events.state';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(),
+    IonicModule.forRoot({
+      innerHTMLTemplatesEnabled: true,
+    }),
     AppRoutingModule,
     HttpClientModule,
     TranslateModule.forRoot({
