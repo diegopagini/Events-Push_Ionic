@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { NavParams } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { Logout } from 'src/app/state/auth/auth.actions';
@@ -18,10 +19,14 @@ export class EventsManagerPage {
   @Select(AuthState.isLogged)
   isLogged$: Observable<boolean>;
 
-  constructor(private _store: Store) {}
+  constructor(private _navParams: NavParams, private _store: Store) {}
 
   ionViewWillEnter(): void {
     if (this.manageEvents) this.manageEvents.initEvents();
+  }
+
+  ionViewWillLeave(): void {
+    this._navParams.data['event'] = null;
   }
 
   logout(): void {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NavController } from '@ionic/angular';
+import { NavController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import * as moment from 'moment';
@@ -10,6 +10,7 @@ import { ToastService } from 'src/app/services/toast.service';
 import {
   CreateEvent,
   GetFutureEvents,
+  UpdateEvent,
 } from 'src/app/state/event/events.actions';
 import { EventsState } from 'src/app/state/event/events.state';
 
@@ -28,6 +29,7 @@ export class AddEditEventsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private navController: NavController,
+    private navParams: NavParams,
     private store: Store,
     private toastService: ToastService,
     private translateService: TranslateService
@@ -43,6 +45,32 @@ export class AddEditEventsComponent implements OnInit {
       if (!this.showEnd) this.event.end = '';
 
       if (this.edit) {
+        this.store
+          .dispatch(new UpdateEvent(this.eventForm.value))
+          .pipe(
+            catchError((error) => {
+              this.toastService.showToast(
+                this.translateService.instant('label.edit.event.error')
+              );
+
+              return throwError(() => error);
+            }),
+            tap(() => {
+              const success = this.store.selectSnapshot(EventsState.success);
+              if (success) {
+                this.toastService.showToast(
+                  this.translateService.instant('label.edit.event.success')
+                );
+
+                this.store.dispatch(new GetFutureEvents());
+                this.navController.navigateForward('events');
+              } else
+                this.toastService.showToast(
+                  this.translateService.instant('label.edit.event.error')
+                );
+            })
+          )
+          .subscribe();
       } else {
         this.store
           .dispatch(new CreateEvent(this.event))
@@ -96,6 +124,7 @@ export class AddEditEventsComponent implements OnInit {
     this.event = null as any;
 
     this.eventForm.patchValue({
+      id: null,
       description: null,
       end: moment().format('YYYY-MM-DDTHH:mm'),
       start: moment().format('YYYY-MM-DDTHH:mm'),
@@ -106,6 +135,8 @@ export class AddEditEventsComponent implements OnInit {
   }
 
   initEvents(): void {
+    this.loadEventToEdit();
+
     if (!this.event) {
       this.edit = false;
       this.showEnd = false;
@@ -117,6 +148,7 @@ export class AddEditEventsComponent implements OnInit {
     this.minDate = moment().format('YYYY-MM-DDTHH:mm');
 
     this.eventForm = this.fb.group({
+      id: [this.event?.id || null],
       description: [this.event?.description || null, [Validators.required]],
       end: [this.event?.end || moment().format('YYYY-MM-DDTHH:mm')],
       start: [
@@ -135,5 +167,9 @@ export class AddEditEventsComponent implements OnInit {
         ],
       ],
     });
+  }
+
+  private loadEventToEdit(): void {
+    this.event = this.navParams.data['event'];
   }
 }

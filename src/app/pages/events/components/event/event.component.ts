@@ -1,5 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { ActionSheetController } from '@ionic/angular';
+import { Browser } from '@capacitor/browser';
+import {
+  ActionSheetController,
+  NavController,
+  NavParams,
+} from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import { EventDDR } from 'src/app/interfaces/event.ddr';
@@ -15,6 +20,8 @@ export class EventComponent {
 
   constructor(
     private actionSheetController: ActionSheetController,
+    private navController: NavController,
+    private navParams: NavParams,
     private store: Store,
     private translateService: TranslateService
   ) {}
@@ -22,6 +29,7 @@ export class EventComponent {
   clickEvent(): void {
     const isLogged = this.store.selectSnapshot(AuthState.isLogged);
     if (isLogged) this.presentActions();
+    else this.openUrl(this.event.url);
   }
 
   private async presentActions(): Promise<void> {
@@ -31,12 +39,16 @@ export class EventComponent {
         {
           text: this.translateService.instant('label.open.url'),
           icon: 'earth-outline',
-          handler: () => {},
+          handler: () => {
+            this.openUrl(this.event.url);
+          },
         },
         {
           text: this.translateService.instant('label.edit.event'),
           icon: 'pencil-outline',
-          handler: () => {},
+          handler: () => {
+            this.passEvent();
+          },
         },
         {
           text: this.translateService.instant('label.remove.event'),
@@ -53,5 +65,14 @@ export class EventComponent {
     });
 
     await actionSheet.present();
+  }
+
+  private passEvent(): void {
+    this.navParams.data['event'] = this.event;
+    this.navController.navigateForward('events-manager');
+  }
+
+  private async openUrl(url: string): Promise<void> {
+    await Browser.open({ url });
   }
 }

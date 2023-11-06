@@ -6,7 +6,7 @@ import { FIREBASE_OPTIONS } from '@angular/fire/compat';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy, NavParams } from '@ionic/angular';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { NgxsModule } from '@ngxs/store';
 import { initializeApp } from 'firebase/app';
@@ -47,6 +47,7 @@ import { EventsState } from './state/event/events.state';
       provide: FIREBASE_OPTIONS,
       useValue: environment.firebase,
     },
+    NavParams,
   ],
   bootstrap: [AppComponent],
 })

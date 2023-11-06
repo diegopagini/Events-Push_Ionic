@@ -1,4 +1,6 @@
 <form [formGroup]="eventForm" (ngSubmit)="addEditEvent()">
+  <input type="hidden" formControlName="id" name="id" />
+
   <ion-item>
     <ion-input
       [label]="'label.title.event' | translate"
