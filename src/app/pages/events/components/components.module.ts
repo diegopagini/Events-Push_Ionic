@@ -3,11 +3,12 @@ import { NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { EventComponent } from './event/event.component';
 import { EventsListComponent } from './events-list/events-list.component';
 
 @NgModule({
-  declarations: [EventsListComponent],
+  declarations: [EventsListComponent, EventComponent],
   imports: [CommonModule, IonicModule, TranslateModule.forChild()],
-  exports: [EventsListComponent],
+  exports: [EventsListComponent, EventComponent],
 })
 export class ComponentsModule {}

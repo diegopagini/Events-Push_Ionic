@@ -1,0 +1,29 @@
+<ion-card [ngClass]="event.type" (click)="clickEvent()">
+  <ion-card-content>
+    <ion-item lines="none">
+      <ion-label>
+        <ion-text>{{ "label.start.event" | translate }}: </ion-text>
+        <ion-text>{{ event.start | date : "dd-MM-yyyy HH:mm" }}</ion-text>
+      </ion-label>
+    </ion-item>
+
+    <ion-item *ngIf="event.end" lines="none">
+      <ion-label>
+        <ion-text>{{ "label.end.event" | translate }}: </ion-text>
+        <ion-text>{{ event.end | date : "dd-MM-yyyy HH:mm" }}</ion-text>
+      </ion-label>
+    </ion-item>
+
+    <ion-item lines="none">
+      <ion-label>
+        <ion-text>{{ event.title }}</ion-text>
+      </ion-label>
+    </ion-item>
+
+    <ion-item lines="none">
+      <ion-label>
+        <ion-text>{{ event.description }}</ion-text>
+      </ion-label>
+    </ion-item>
+  </ion-card-content>
+</ion-card>
