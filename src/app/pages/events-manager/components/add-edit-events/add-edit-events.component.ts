@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 import * as moment from 'moment';
 import { catchError, tap, throwError } from 'rxjs';
 import { EventDDR } from 'src/app/interfaces/event.ddr';
 import { ToastService } from 'src/app/services/toast.service';
-import { CreateEvent } from 'src/app/state/event/events.actions';
+import {
+  CreateEvent,
+  GetFutureEvents,
+} from 'src/app/state/event/events.actions';
 import { EventsState } from 'src/app/state/event/events.state';
 
 @Component({
@@ -24,7 +27,7 @@ export class AddEditEventsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
+    private navController: NavController,
     private store: Store,
     private toastService: ToastService,
     private translateService: TranslateService
@@ -59,7 +62,9 @@ export class AddEditEventsComponent implements OnInit {
                 );
 
                 this.newEvent();
-                this.router.navigate(['events']);
+
+                this.store.dispatch(new GetFutureEvents());
+                this.navController.navigateForward(['events']);
               } else {
                 this.toastService.showToast(
                   this.translateService.instant('label.add.event.error')

@@ -2,7 +2,12 @@ import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { EventDDR } from 'src/app/interfaces/event.ddr';
 
-import { CreateEvent, DeleteEvent, GetFutureEvents, UpdateEvent } from './events.actions';
+import {
+  CreateEvent,
+  DeleteEvent,
+  GetFutureEvents,
+  UpdateEvent,
+} from './events.actions';
 import { EventsService } from './events.service';
 
 export class EventsStateModel {
@@ -94,7 +99,6 @@ export class EventsState {
   getFutureEvent({ patchState }: StateContext<EventsStateModel>) {
     return this.eventsService.getFutureEvents().then((snapshot) => {
       const events: EventDDR[] = [];
-
       snapshot.forEach((child) => {
         const data = child.val() as EventDDR;
         events.unshift(data);
