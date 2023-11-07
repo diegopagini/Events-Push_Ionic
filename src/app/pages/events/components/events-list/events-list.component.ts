@@ -7,6 +7,7 @@ import { GetFutureEvents } from 'src/app/state/event/events.actions';
 import { EventsState } from 'src/app/state/event/events.state';
 
 import { CHIPS } from './chips';
+import { IonRefreshEvent } from './ion-refresh-event.interface';
 
 @Component({
   selector: 'app-events-list',
@@ -26,6 +27,11 @@ export class EventsListComponent implements OnInit {
   ngOnInit() {
     this.store.dispatch(new GetFutureEvents());
     this.fetchEvents();
+  }
+
+  refreshEvents(event: IonRefreshEvent) {
+    this.store.dispatch(new GetFutureEvents());
+    event.target.complete();
   }
 
   filterEvents(): void {
@@ -72,6 +78,8 @@ export class EventsListComponent implements OnInit {
           const events = this.store.selectSnapshot(EventsState.events);
           this.events = events;
           this.originalEvents = events;
+          this.typeSearch = '';
+          if (this.searchbar) this.searchbar.value = '';
         })
       )
       .subscribe();
