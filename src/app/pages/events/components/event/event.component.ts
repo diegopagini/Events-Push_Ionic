@@ -7,8 +7,16 @@ import {
 } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
+import { catchError, tap, throwError } from 'rxjs';
 import { EventDDR } from 'src/app/interfaces/event.ddr';
+import { AlertService } from 'src/app/services/alert.service';
+import { ToastService } from 'src/app/services/toast.service';
 import { AuthState } from 'src/app/state/auth/auth.state';
+import {
+  DeleteEvent,
+  GetFutureEvents,
+} from 'src/app/state/event/events.actions';
+import { EventsState } from 'src/app/state/event/events.state';
 
 @Component({
   selector: 'app-event',
@@ -20,10 +28,12 @@ export class EventComponent {
 
   constructor(
     private actionSheetController: ActionSheetController,
+    private alertService: AlertService,
     private navController: NavController,
     private navParams: NavParams,
     private store: Store,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private toastService: ToastService
   ) {}
 
   clickEvent(): void {
@@ -53,7 +63,9 @@ export class EventComponent {
         {
           text: this.translateService.instant('label.remove.event'),
           icon: 'trash-outline',
-          handler: () => {},
+          handler: () => {
+            this.removeEventConfirm();
+          },
         },
         {
           text: this.translateService.instant('label.close.options'),
@@ -74,5 +86,42 @@ export class EventComponent {
 
   private async openUrl(url: string): Promise<void> {
     await Browser.open({ url });
+  }
+
+  private removeEventConfirm(): void {
+    this.alertService.alertConfirm({
+      header: this.translateService.instant('label.confirm'),
+      message: this.translateService.instant('label.remove.event.message'),
+      functionOk: () => {
+        this.removeEvent();
+      },
+      functionCancel: () => {},
+    });
+  }
+
+  private removeEvent(): void {
+    this.store
+      .dispatch(new DeleteEvent(this.event.id))
+      .pipe(
+        tap(() => {
+          const success = this.store.selectSnapshot(EventsState.success);
+          if (success) {
+            this.toastService.showToast(
+              this.translateService.instant('label.remove.event.success')
+            );
+            this.store.dispatch(new GetFutureEvents());
+          } else
+            this.toastService.showToast(
+              this.translateService.instant('label.remove.event.error')
+            );
+        }),
+        catchError((error) => {
+          this.toastService.showToast(
+            this.translateService.instant('label.remove.event.error')
+          );
+          return throwError(() => error);
+        })
+      )
+      .subscribe();
   }
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { IonSearchbar } from '@ionic/angular';
 import { Select, Store } from '@ngxs/store';
 import { filter, Observable, tap } from 'rxjs';
 import { EventDDR } from 'src/app/interfaces/event.ddr';
@@ -12,13 +13,26 @@ import { EventsState } from 'src/app/state/event/events.state';
 })
 export class EventsListComponent implements OnInit {
   @Select(EventsState.events) events$: Observable<EventDDR[]>;
+  @ViewChild('searchbar', { static: false }) searchbar: IonSearchbar;
   events: EventDDR[] = [];
+  private originalEvents: EventDDR[] = [];
 
   constructor(private store: Store) {}
 
   ngOnInit() {
     this.store.dispatch(new GetFutureEvents());
     this.fetchEvents();
+  }
+
+  filterEvents(): void {
+    const value = this.searchbar.value || '';
+
+    this.events = this.originalEvents.filter((event: EventDDR) =>
+      event.title
+        .toLowerCase()
+        .trim()
+        .includes(value?.toLocaleLowerCase().trim())
+    );
   }
 
   private fetchEvents(): void {
@@ -28,6 +42,7 @@ export class EventsListComponent implements OnInit {
         tap(() => {
           const events = this.store.selectSnapshot(EventsState.events);
           this.events = events;
+          this.originalEvents = events;
         })
       )
       .subscribe();
