@@ -6,6 +6,8 @@ import { EventDDR } from 'src/app/interfaces/event.ddr';
 import { GetFutureEvents } from 'src/app/state/event/events.actions';
 import { EventsState } from 'src/app/state/event/events.state';
 
+import { CHIPS } from './chips';
+
 @Component({
   selector: 'app-events-list',
   templateUrl: './events-list.component.html',
@@ -15,6 +17,8 @@ export class EventsListComponent implements OnInit {
   @Select(EventsState.events) events$: Observable<EventDDR[]>;
   @ViewChild('searchbar', { static: false }) searchbar: IonSearchbar;
   events: EventDDR[] = [];
+  chips = [...CHIPS];
+  typeSearch: string;
   private originalEvents: EventDDR[] = [];
 
   constructor(private store: Store) {}
@@ -27,11 +31,36 @@ export class EventsListComponent implements OnInit {
   filterEvents(): void {
     const value = this.searchbar.value || '';
 
-    this.events = this.originalEvents.filter((event: EventDDR) =>
-      event.title
-        .toLowerCase()
-        .trim()
-        .includes(value?.toLocaleLowerCase().trim())
+    if (!this.typeSearch) {
+      this.events = this.originalEvents.filter((event: EventDDR) =>
+        event.title
+          .toLowerCase()
+          .trim()
+          .includes(value?.toLocaleLowerCase().trim())
+      );
+      return;
+    }
+
+    this.events = this.originalEvents.filter(
+      (event: EventDDR) =>
+        event.type === this.typeSearch &&
+        event.title
+          .toLowerCase()
+          .trim()
+          .includes(value?.toLocaleLowerCase().trim())
+    );
+  }
+
+  filterByType(type: string): void {
+    if (this.typeSearch === type) {
+      this.typeSearch = '';
+      this.events = [...this.originalEvents];
+      return;
+    }
+
+    this.typeSearch = type;
+    this.events = this.originalEvents.filter(
+      (event: EventDDR) => event.type.toLowerCase() === type.toLowerCase()
     );
   }
 

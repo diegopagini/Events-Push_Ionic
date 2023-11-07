@@ -5,6 +5,20 @@
     </ion-col>
   </ion-row>
 
+  <ion-row>
+    <ion-col>
+      <ion-chip
+        *ngFor="let chip of chips"
+        (click)="filterByType(chip.style)"
+        [class]="chip.style"
+        [ngClass]="{ selected: typeSearch === chip.style }"
+      >
+        <ion-icon [name]="chip.icon"></ion-icon>
+        <ion-label>{{ chip.label | translate }}</ion-label>
+      </ion-chip>
+    </ion-col>
+  </ion-row>
+
   <ion-row *ngIf="events?.length === 0">
     <ion-col class="ion-text-center ion-margin">
       {{ "label.no.events" | translate }}
