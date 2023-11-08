@@ -17,6 +17,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthState } from './state/auth/auth.state';
 import { EventsState } from './state/event/events.state';
+import { NotificationsState } from './state/notifications/notifications.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -39,7 +40,7 @@ import { EventsState } from './state/event/events.state';
     provideAuth(() => getAuth()),
     provideDatabase(() => getDatabase()),
     // Ngxs
-    NgxsModule.forRoot([AuthState, EventsState]),
+    NgxsModule.forRoot([AuthState, EventsState, NotificationsState]),
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

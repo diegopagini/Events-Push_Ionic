@@ -11,7 +11,7 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class NotificationsService {
+export class PushService {
   async init(): Promise<void> {
     const isPushNotificationAvailable =
       Capacitor.isPluginAvailable('PushNotification');
