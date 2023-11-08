@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "403682070514",
+    "firebase_url": "https://events-push-76455-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "events-push-76455",
+    "storage_bucket": "events-push-76455.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:403682070514:android:45ffb60ab100e5f652656b",
+        "android_client_info": {
+          "package_name": "io.ionic.starter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDteJoUYllxXcqOiQVh6Szg1xN1o_oCQG4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Device } from '@capacitor/device';
 import { NavController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
@@ -13,6 +14,8 @@ import {
   UpdateEvent,
 } from 'src/app/state/event/events.actions';
 import { EventsState } from 'src/app/state/event/events.state';
+import { SendNotification } from 'src/app/state/notifications/notifications.actions';
+import { NotificationsState } from 'src/app/state/notifications/notifications.state';
 
 @Component({
   selector: 'app-add-edit-events',
@@ -82,12 +85,33 @@ export class AddEditEventsComponent implements OnInit {
 
               return throwError(() => error);
             }),
-            tap(() => {
+            tap(async () => {
               const success = this.store.selectSnapshot(EventsState.success);
               if (success) {
                 this.toastService.showToast(
                   this.translateService.instant('label.add.event.success')
                 );
+
+                const info = await Device.getInfo();
+                if (info.platform === 'android') {
+                  // Send notification:
+                  this.store
+                    .dispatch(
+                      new SendNotification({
+                        title: this.event.title,
+                        body: this.event.description,
+                      })
+                    )
+                    .pipe(
+                      tap(() => {
+                        const success = this.store.selectSnapshot(
+                          NotificationsState.success
+                        );
+                        console.log('Notification: ', success);
+                      })
+                    )
+                    .subscribe();
+                }
 
                 this.newEvent();
 
