@@ -4,6 +4,7 @@ import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
 
+import { NotificationsService } from './services/notifications.service';
 import { CheckIsLogged } from './state/auth/auth.actions';
 
 @Component({
@@ -13,6 +14,7 @@ import { CheckIsLogged } from './state/auth/auth.actions';
 })
 export class AppComponent implements OnInit {
   constructor(
+    private _notificationService: NotificationsService,
     private _platform: Platform,
     private _store: Store,
     private _translateService: TranslateService
@@ -29,6 +31,7 @@ export class AppComponent implements OnInit {
       if (language.value)
         this._translateService.use(language.value.slice(0, 2));
 
+      this._notificationService.init();
       this._store.dispatch(new CheckIsLogged());
     });
   }
